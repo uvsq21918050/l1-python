@@ -16,7 +16,13 @@ y1 = 250
 x2 = 100
 y2 = 350 
 
-liste_couleur = ["blue","green","yellow","red","black", "white"]
+#Variable de contrôle pour le compteur
+val_compteur = tk.StringVar()
+val_compteur.set("0")
+
+
+
+liste_couleur = ["blue","green","yellow","red", "white"]
 
 def initialize_cercle(event):
     global identifiant_cercle
@@ -34,10 +40,17 @@ dep = 100
 
 def avance_cercle(liste_couleur):
     global identifiant_cercle
-    a = randint(0,5)
+    a = randint(0,4)
     if ( C.coords(identifiant_cercle)[2] < 600 ):
         C.move(identifiant_cercle, dep,0)
     else :
+        #Mise à jour du compteur
+        val = int(val_compteur.get())
+        val += 1
+        val_compteur.set(str(val))
+        global identifiant_compteur
+        C.itemconfig(identifiant_compteur, text =  "Compteur : " + val_compteur.get())
+
         C.delete(identifiant_cercle)
         identifiant_cercle = C.create_oval(x1,y1,x2,y2, fill = liste_couleur[a])
     pass
@@ -49,17 +62,30 @@ def recule_cercle():
     else : print("Ne recule pas")
     pass
 
-#.move(identifiant_objet, dep_x, dep_y)
+def reset():
+    global identifiant_cercle
+    C.delete(identifiant_cercle)
+    identifiant_cercle = C.create_oval(x1,y1,x2,y2, fill = liste_couleur[0])
+    
+    global identifiant_compteur
+    val_compteur.set("0")
+    C.itemconfig(identifiant_compteur, text =  "Compteur : " + val_compteur.get())
+    pass
+
+
 
 ##################################
 C = tk.Canvas(background = "black", width = CANVAS_WIDTH, height = CANVAS_HEIGHT)
 B_A = tk.Button(text = "AVANCER", command = lambda :avance_cercle(liste_couleur))
 B_R = tk.Button(text = "RECULER", command = recule_cercle)
+B_Reset = tk.Button(text = "RESET", command = reset)
+identifiant_compteur = C.create_text(550, 25, text = "Compteur : " + val_compteur.get()  , fill = "white")
 
 
 #POSITIONNEMENT DES OBJETS
 B_A.grid(row = 0, column = 1)
 B_R.grid(row = 0, column = 2)
+B_Reset.grid(row = 0, column = 3)
 C.grid(row = 1, column = 0, columnspan = 4)
 
 
